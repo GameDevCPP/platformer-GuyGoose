@@ -34,17 +34,18 @@ void Level2Scene::Load() {
     auto enemy = makeEntity();
     enemy->setPosition(ls::getTilePosition(ls::findTiles(ls::ENEMY)[0]) +
                        Vector2f(0, 24));
-    // *********************************
-    // Add HurtComponent
+
+    // Add HurtComponent (Check for collision with player and kill them)
+    enemy->addComponent<HurtComponent>();
 
     // Add ShapeComponent, Red 16.f Circle
-
-
-
+    auto s = enemy->addComponent<ShapeComponent>();
+    s->setShape<sf::CircleShape>(16.f);
+    s->getShape().setFillColor(Color::Red);
+    s->getShape().setOrigin(Vector2f(16.f, 16.f));
 
     // Add EnemyAIComponent
-
-    // *********************************
+    enemy->addComponent<EnemyAIComponent>();
   }
 
   // Create Turret
@@ -61,16 +62,14 @@ void Level2Scene::Load() {
 
   // Add physics colliders to level tiles.
   {
-    // *********************************
-
-
-
-
-
-
-
-
-    // *********************************
+    auto walls = ls::findTiles(ls::WALL);
+    for (auto w : walls) {
+      auto pos = ls::getTilePosition(w);
+      pos += Vector2f(20.f, 20.f); // offset to center
+      auto e = makeEntity();
+      e->setPosition(pos);
+      e->addComponent<PhysicsComponent>(false, Vector2f(40.f, 40.f));
+    }
   }
 
   cout << " Scene 2 Load Done" << endl;
